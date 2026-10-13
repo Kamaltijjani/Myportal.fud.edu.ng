@@ -1,22 +1,17 @@
 # FUD Portal — Student Prototype
 
-An independent educational UI project inspired by Federal University Dutse. **This is not the official university portal.** Campus statistics, testimonials, courses and dashboard records are demonstration content.
+An independent educational UI project inspired by Federal University Dutse. This repository is not an official university service. Existing university branding, statistics, contact details, news, testimonials and academic claims have not been verified in this review.
 
 ## Run locally
 
-Run `python -m http.server 8000` in this folder and open `http://localhost:8000`. No build step is required.
+Run `python -m http.server 8000` in this folder and open `http://localhost:8000`. No build step is required. External fonts, icons, images and animation scripts need internet access.
 
-## Working demo features
+## Current limitations
 
-- Responsive navigation and theme toggle (saved locally when browser storage is available).
-- A calendar with previous/next month navigation.
-- Testimonial rotation and animated counters.
-- A demo dashboard opened with an optional display name; no password is collected.
+The current HTML has no backend or real authentication. Its simulated login accepts arbitrary credentials and logs them to the browser console: **do not enter real usernames or passwords**. Newsletter and placeholder actions are demonstrations, not connected services. The HTML references a manifest and service worker that are not present in this repository.
 
-## Limitations
+## Repair status
 
-There is no backend, real authentication, registration, payments, results system or newsletter service. Placeholder links state that the feature is not connected. The newsletter does not send or save subscriptions. PWA support is not configured; references to missing manifest/service-worker files have been removed.
+Local repairs were tested for a credential-free demo dashboard, missing animation-library fallback, calendar navigation, theme storage, honest newsletter feedback and removal of missing PWA references. Publication of those HTML changes is pending approval because the page retains unverified university content. These fixes are not yet in the published HTML.
 
-Fonts, icons, images and AOS load from external services. If AOS fails, local interactions continue and animated sections remain visible.
-
-Do not use this prototype to collect student credentials or personal records. Production use requires a properly authorized backend, access controls and verified university content.
+Before using this project beyond a local demonstration, replace or verify the institutional content and implement an authorized backend with appropriate access controls.
