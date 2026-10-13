@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Federal University Dutse - Excellence and Innovation</title>
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- Installable PWA support is not configured in this static prototype. -->
     <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1794,6 +1794,7 @@
     </style>
 </head>
 <body>
+    <p role="note" style="padding:12px;text-align:center;background:#fff3cd;color:#222;position:relative;z-index:1001">Student portfolio prototype — not the official FUD portal. All dashboard data is fictional. Do not enter real credentials.</p>
     <!-- Dark Mode Toggle -->
     <div class="dark-mode-toggle" id="darkModeToggle">
         <i class="fas fa-moon"></i>
@@ -1832,7 +1833,7 @@
                     </li>
                     <li><a href="#news">News</a></li>
                     <li><a href="#events">Events</a></li>
-                    <li><a href="#" id="loginBtn">Login</a></li>
+                    <li><a href="#" id="loginBtn">Demo Dashboard</a></li>
                 </ul>
             </nav>
         </div>
@@ -2189,42 +2190,15 @@
         <div class="modal-content">
             <span class="close-modal" id="closeModal">&times;</span>
             <div class="login-form">
-                <h2>Login to Your Account</h2>
+                <h2>Preview the Demo Dashboard</h2>
                 <form id="loginForm">
+                    <p>Local preview only. No authentication or university account access.</p>
                     <div class="form-group">
-                        <label for="username">Username/Email</label>
-                        <input type="text" id="username" placeholder="Enter your username or email" required>
+                        <label for="username">Demo display name</label>
+                        <input type="text" id="username" placeholder="Demo Student" maxlength="60" autocomplete="off">
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="Enter your password" required>
-                    </div>
-                    <div class="form-options">
-                        <div class="remember-me">
-                            <input type="checkbox" id="remember">
-                            <label for="remember">Remember me</label>
-                        </div>
-                        <a href="#" class="forgot-password">Forgot password?</a>
-                    </div>
-                    <button type="submit" class="login-btn">Login</button>
-                    <div class="form-footer">
-                        <p>Don't have an account? <a href="#">Register here</a></p>
-                    </div>
+                    <button type="submit" class="login-btn">Open Demo Dashboard</button>
                 </form>
-                <div class="social-login">
-                    <p>Or login with</p>
-                    <div class="social-btns">
-                        <a href="#" class="social-btn facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-btn google">
-                            <i class="fab fa-google"></i>
-                        </a>
-                        <a href="#" class="social-btn twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -2421,11 +2395,13 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         // Initialize AOS (Animate On Scroll)
-        AOS.init({
+        if (window.AOS) AOS.init({
             duration: 800,
             once: true,
             easing: 'ease-in-out'
         });
+
+        else document.querySelectorAll("[data-aos]").forEach(el => el.removeAttribute("data-aos"));
 
         // Mobile Menu Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -2461,18 +2437,15 @@
         const speed = 200;
 
         function animateCounters() {
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText;
-                const increment = target / speed;
-
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + increment);
-                    setTimeout(animateCounters, 1);
-                } else {
-                    counter.innerText = target;
-                }
-            });
+            const started = performance.now();
+            function frame(now) {
+                const progress = Math.min((now - started) / 1200, 1);
+                counters.forEach(counter => {
+                    counter.textContent = Math.round(Number(counter.dataset.target) * progress);
+                });
+                if (progress < 1) requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
         }
 
         // Start counter animation when stats section is in view
@@ -2524,28 +2497,11 @@
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Simple validation (in a real app, this would be more secure)
-            if (username && password) {
-                // Hide login modal
-                loginModal.style.display = 'none';
-                
-                // Show dashboard
-                dashboard.style.display = 'block';
-                
-                // Update username in dashboard
-                document.getElementById('userName').textContent = username;
-                
-                // Scroll to dashboard
-                dashboard.scrollIntoView({ behavior: 'smooth' });
-                
-                // In a real application, you would send this data to a server for authentication
-                console.log('Login attempt with:', { username, password });
-            } else {
-                alert('Please enter both username and password');
-            }
+            const username = document.getElementById('username').value.trim() || 'Demo Student';
+            loginModal.style.display = 'none';
+            dashboard.style.display = 'block';
+            document.getElementById('userName').textContent = username;
+            dashboard.scrollIntoView({ behavior: 'smooth' });
         });
 
         // Logout Functionality
@@ -2579,11 +2535,13 @@
                 : '<i class="fas fa-moon"></i>';
             
             // Save preference to localStorage
-            localStorage.setItem('darkMode', isDarkMode);
+            try { localStorage.setItem('darkMode', isDarkMode); } catch (_) { /* Storage may be disabled. */ }
         });
 
         // Check for saved dark mode preference
-        if (localStorage.getItem('darkMode') === 'true') {
+        let savedDarkMode = false;
+        try { savedDarkMode = localStorage.getItem('darkMode') === 'true'; } catch (_) {}
+        if (savedDarkMode) {
             document.body.classList.add('dark-mode');
             darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
@@ -2709,20 +2667,9 @@
         newsletterForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = newsletterForm.querySelector('input').value;
-            alert(`Thank you for subscribing with ${email}! You'll receive our newsletter soon.`);
+            alert('Demo only: no subscription was created and no email was sent.');
             newsletterForm.reset();
         });
-
-        // Service Worker Registration for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }).catch(err => {
-                    console.log('ServiceWorker registration failed: ', err);
-                });
-            });
-        }
 
         // Offline Detection
         window.addEventListener('online', () => {
@@ -2735,11 +2682,22 @@
             // Could show a notification that connection is lost
         });
 
+        // Placeholder features must not imply a live university service.
+        document.querySelectorAll('a[href="#"]:not(#loginBtn)').forEach(link => {
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                alert('This feature is not connected in the student portfolio demo.');
+            });
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') loginModal.style.display = 'none';
+        });
+
         // Web Share API
         const shareData = {
             title: 'Federal University Dutse',
-            text: 'Check out the official website of Federal University Dutse',
-            url: 'https://www.fud.edu.ng'
+            text: 'Student-built FUD portal prototype — not an official university service',
+            url: window.location.href
         };
 
         const shareBtn = document.createElement('button');
