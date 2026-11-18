@@ -2,6 +2,8 @@
 
 An independent educational UI project inspired by Federal University Dutse. **This is not the official university portal.** Existing university branding, statistics, contact details, news, testimonials and academic claims have not been independently verified. Dashboard records are fictional demonstration content.
 
+[Open the published demo](https://kamaltijjani.github.io/Myportal.fud.edu.ng/)
+
 ## Run locally
 
 Run `python -m http.server 8000` in this folder and open `http://localhost:8000`. No build step is required. External fonts, icons, images and animation scripts need internet access.
